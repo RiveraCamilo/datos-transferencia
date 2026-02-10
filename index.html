@@ -11,21 +11,18 @@
     button { margin-top: 12px; padding: 10px 14px; border-radius: 10px; border: 1px solid #333; background: #111; color: #fff; cursor: pointer; }
     .hint { margin-top: 10px; color: #555; font-size: 14px; }
     .status { margin-left: 10px; font-weight: 600; }
-    a { color: inherit; }
   </style>
 </head>
 <body>
   <div class="card">
     <h2 style="margin:0 0 12px 0;">Datos de transferencia</h2>
 
-    <textarea id="data" readonly>
-Florencia Sofía Troncoso león
-RUT: 176134356
+    <textarea id="data" readonly>Florencia Sofía Troncoso León
+RUT: 17.613.435-6
 Mercado Pago
 Cuenta Vista
 Número de cuenta: 1000449334
-ftroncosoleon@gmail.com
-    </textarea>
+ftroncosoleon@gmail.com</textarea>
 
     <div>
       <button id="copyBtn" type="button">Copiar</button>
@@ -39,15 +36,14 @@ ftroncosoleon@gmail.com
     const ta = document.getElementById('data');
     const status = document.getElementById('status');
     const hint = document.getElementById('hint');
-    const openNew = document.getElementById('openNew');
-    openNew.href = location.href;
 
     async function copy() {
       status.textContent = '';
       hint.textContent = '';
-      const text = ta.value;
 
-      // 1) Clipboard API (mejor camino, pero suele bloquearse en iframes sin permisos)
+      const text = ta.value.trim();
+
+      // 1) Clipboard API
       try {
         await navigator.clipboard.writeText(text);
         status.textContent = 'Copiado ✅';
@@ -60,16 +56,15 @@ ftroncosoleon@gmail.com
           const ok = document.execCommand('copy');
           if (ok) {
             status.textContent = 'Copiado ✅';
-            hint.textContent = 'Si estabas en Notion, esto puede depender del navegador.';
             return;
           }
         } catch (_) {}
 
-        // 3) Último recurso: dejar el texto seleccionado
+        // 3) Último recurso
         ta.focus();
         ta.select();
-        status.textContent = 'No se pudo copiar aquí';
-        hint.textContent = 'El texto quedó seleccionado: usa Ctrl+C (o abre en nueva pestaña y vuelve a intentar).';
+        status.textContent = 'No se pudo copiar';
+        hint.textContent = 'El texto quedó seleccionado: usa Ctrl+C.';
       }
     }
 
