@@ -1,0 +1,85 @@
+# datos-transferencia
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Datos de transferencia</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; }
+    .card { max-width: 720px; padding: 16px; border: 1px solid #ddd; border-radius: 12px; }
+    textarea { width: 100%; height: 180px; padding: 12px; border-radius: 10px; border: 1px solid #ccc; resize: vertical; }
+    button { margin-top: 12px; padding: 10px 14px; border-radius: 10px; border: 1px solid #333; background: #111; color: #fff; cursor: pointer; }
+    .hint { margin-top: 10px; color: #555; font-size: 14px; }
+    .status { margin-left: 10px; font-weight: 600; }
+    a { color: inherit; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2 style="margin:0 0 12px 0;">Datos de transferencia</h2>
+
+    <textarea id="data" readonly>Transferencia bancaria
+Nombre: ________
+RUT: ________
+Banco: ________
+Tipo de cuenta: ________
+N° de cuenta: ________
+Email: ________
+Glosa: ________</textarea>
+
+    <div>
+      <button id="copyBtn" type="button">Copiar</button>
+      <span id="status" class="status"></span>
+    </div>
+
+    <div class="hint" id="hint"></div>
+    <div class="hint">
+      Si estás viendo esto dentro de Notion y no copia, prueba:
+      <a id="openNew" target="_blank" rel="noopener">Abrir en nueva pestaña</a>.
+    </div>
+  </div>
+
+  <script>
+    const ta = document.getElementById('data');
+    const status = document.getElementById('status');
+    const hint = document.getElementById('hint');
+    const openNew = document.getElementById('openNew');
+    openNew.href = location.href;
+
+    async function copy() {
+      status.textContent = '';
+      hint.textContent = '';
+      const text = ta.value;
+
+      // 1) Clipboard API (mejor camino, pero suele bloquearse en iframes sin permisos)
+      try {
+        await navigator.clipboard.writeText(text);
+        status.textContent = 'Copiado ✅';
+        return;
+      } catch (e) {
+        // 2) Fallback legacy
+        try {
+          ta.focus();
+          ta.select();
+          const ok = document.execCommand('copy');
+          if (ok) {
+            status.textContent = 'Copiado ✅';
+            hint.textContent = 'Si estabas en Notion, esto puede depender del navegador.';
+            return;
+          }
+        } catch (_) {}
+
+        // 3) Último recurso: dejar el texto seleccionado
+        ta.focus();
+        ta.select();
+        status.textContent = 'No se pudo copiar aquí';
+        hint.textContent = 'El texto quedó seleccionado: usa Ctrl+C (o abre en nueva pestaña y vuelve a intentar).';
+      }
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', copy);
+  </script>
+</body>
+</html>
